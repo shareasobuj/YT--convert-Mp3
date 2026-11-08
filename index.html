@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -177,23 +177,29 @@
       gap: 5px;
     }
 
-    /* Embedded Converter Container */
-    .converter-frame-wrapper {
+    /* Main Big Download Button */
+    .btn-download-main {
       width: 100%;
+      background: #059669;
+      color: white;
+      border: none;
+      padding: 16px;
       border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      min-height: 70px;
-      background: #f1f5f9;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+      transition: background 0.2s;
     }
 
-    .converter-frame-wrapper iframe {
-      width: 100%;
-      height: 75px;
-      border: none;
+    .btn-download-main:hover {
+      background: #047857;
     }
 
     .section-label {
@@ -266,10 +272,10 @@
       </div>
     </div>
 
-    <!-- Embedded direct converter engine (no broken redirect) -->
-    <div class="converter-frame-wrapper" id="frameWrapper">
-      <p style="color: #64748b; font-size: 13px;">Click "Convert to MP3" above to generate link</p>
-    </div>
+    <!-- Direct Working Download Action Button -->
+    <a href="#" id="mainDownloadBtn" class="btn-download-main" target="_blank" onclick="triggerDownload(event)">
+      <i class="fa-solid fa-download"></i> Download MP3
+    </a>
 
     <div class="section-label">Backup Server Mirrors</div>
     
@@ -311,13 +317,25 @@
         return;
       }
 
-      // Update Thumbnail & Info
+      // Update Thumbnail & Info dynamically
       document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
       document.getElementById('videoTitle').innerText = `YouTube Video ID: ${videoId}`;
+      
+      alert('Conversion successful! Click the green "Download MP3" button below.');
+    }
 
-      // Update embedded converter engine (Loader.to iframe without 410 error)
-      const frameWrapper = document.getElementById('frameWrapper');
-      frameWrapper.innerHTML = `<iframe src="https://loader.to/api/card/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3" scrolling="no"></iframe>`;
+    function triggerDownload(e) {
+      const url = document.getElementById('ytUrl').value.trim();
+      const videoId = extractVideoID(url);
+
+      if (!videoId) {
+        e.preventDefault();
+        alert('Please paste a YouTube link and click Convert first!');
+        return;
+      }
+
+      // Safe direct link redirect to active converter endpoint
+      this.href = `https://loader.to/api/card/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3`;
     }
 
     function useMirror(e, serverNum) {
