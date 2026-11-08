@@ -1,252 +1,341 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube to MP3 Converter</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font: Inter & Noto Sans Bengali -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        body {
-            font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
-            background-color: #f3f4f6;
-        }
-        .pulse-subtle {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube to MP3 Converter</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px 15px;
+    }
+
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 30px 24px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e6f7f2;
+      color: #0d9488;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+
+    .input-label {
+      display: block;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 14px 40px 14px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-wrapper input:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      cursor: pointer;
+      display: none;
+      font-size: 16px;
+    }
+
+    .btn-convert {
+      width: 100%;
+      background: #cc0000;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-convert:hover {
+      background: #b30000;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e2e8f0;
+      margin: 25px 0;
+    }
+
+    .status-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 20px;
+    }
+
+    .status-title i {
+      color: #10b981;
+    }
+
+    .preview-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .preview-card img {
+      width: 90px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #cbd5e1;
+    }
+
+    .preview-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .preview-info h4 {
+      font-size: 13px;
+      color: #1e293b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .preview-info p {
+      font-size: 12px;
+      color: #10b981;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Embedded Converter Container */
+    .converter-frame-wrapper {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      min-height: 70px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .converter-frame-wrapper iframe {
+      width: 100%;
+      height: 75px;
+      border: none;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .mirror-btn {
+      width: 100%;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .mirror-btn:hover {
+      background: #e2e8f0;
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between items-center p-4 sm:p-6 bg-slate-100">
+<body>
 
-    <!-- Top Header Notice (Updated to English) -->
-    <header class="w-full max-w-2xl text-center my-4">
-        <p class="text-sm sm:text-base text-gray-700 font-medium bg-white py-3 px-6 rounded-2xl shadow-sm border border-gray-200">
-            Fast & Free <span class="font-semibold text-red-600">YouTube to MP3 Converter</span> — Works seamlessly on all mobile and desktop devices.
-        </p>
-    </header>
+  <div class="container">
+    <div class="badge"><i class="fa-solid fa-music"></i> High Quality Audio</div>
+    
+    <h1>YouTube to MP3 Converter</h1>
+    
+    <label class="input-label" for="ytUrl">Paste YouTube Link</label>
+    <div class="input-wrapper">
+      <input type="text" id="ytUrl" placeholder="https://www.youtube.com/watch?v=..." oninput="checkInput()">
+      <i class="fa-solid fa-xmark clear-btn" id="clearBtn" onclick="clearInput()"></i>
+    </div>
+    
+    <button class="btn-convert" onclick="processConversion()">
+      <i class="fa-solid fa-play"></i> Convert to MP3
+    </button>
 
-    <!-- Main Converter Card -->
-    <main class="w-full max-w-2xl bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-10 my-auto transition-all">
-        
-        <!-- App Header Title & Badge -->
-        <div class="mb-6">
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                YouTube to MP3 Converter
-            </h1>
-            <span class="inline-block bg-teal-100 text-teal-800 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full border border-teal-200">
-                High Quality Audio
-            </span>
-        </div>
+    <div class="divider"></div>
 
-        <!-- Conversion Form -->
-        <form id="convertForm" onsubmit="handleConvert(event)" class="space-y-5">
-            <div>
-                <label for="ytUrl" class="block text-gray-700 text-sm font-bold mb-2">
-                    Paste YouTube Link
-                </label>
-                <div class="relative">
-                    <input 
-                        type="url" 
-                        id="ytUrl" 
-                        placeholder="https://youtube.com/watch?v=..." 
-                        required
-                        class="w-full px-4 py-3.5 pr-10 text-gray-800 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition text-sm sm:text-base"
-                    />
-                    <button 
-                        type="button" 
-                        onclick="clearInput()" 
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
-                        title="Clear link"
-                    >
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <p id="errorMsg" class="hidden text-red-500 text-xs sm:text-sm mt-1.5 font-medium">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Please enter a valid YouTube URL (e.g. youtube.com/watch?v=... or youtu.be/...)
-                </p>
-            </div>
+    <div class="status-title">
+      <i class="fa-solid fa-circle-check"></i> Your MP3 is ready!
+    </div>
 
-            <!-- Red Convert Button -->
-            <button 
-                type="submit" 
-                id="convertBtn"
-                class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-4 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center text-base sm:text-lg"
-            >
-                <span id="btnText">Convert to MP3</span>
-                <span id="btnSpinner" class="hidden flex items-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Converting Audio...
-                </span>
-            </button>
-        </form>
+    <div class="preview-card">
+      <img id="thumbImg" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&auto=format&fit=crop&q=60" alt="Thumbnail">
+      <div class="preview-info">
+        <h4 id="videoTitle">Ready to convert video...</h4>
+        <p><i class="fa-solid fa-music"></i> Quality: 320 kbps High Quality</p>
+      </div>
+    </div>
 
-        <!-- Progress Status -->
-        <div id="progressSection" class="hidden mt-6 text-center space-y-2">
-            <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                <div id="progressBar" class="bg-red-600 h-2.5 rounded-full transition-all duration-300 w-0"></div>
-            </div>
-            <p id="statusText" class="text-xs text-gray-500 font-medium">Processing audio file...</p>
-        </div>
+    <!-- Embedded direct converter engine (no broken redirect) -->
+    <div class="converter-frame-wrapper" id="frameWrapper">
+      <p style="color: #64748b; font-size: 13px;">Click "Convert to MP3" above to generate link</p>
+    </div>
 
-        <!-- Download Result Section -->
-        <div id="resultSection" class="mt-8 pt-6 border-t border-gray-200 text-left">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <i class="fa-solid fa-circle-check text-emerald-500 mr-2 text-xl"></i> 
-                <span id="resultHeading">Your MP3 is ready!</span>
-            </h2>
-            
-            <!-- Video Info Preview -->
-            <div id="videoMeta" class="mb-4 p-3 bg-slate-50 rounded-xl flex items-center space-x-3 border border-gray-200">
-                <img id="videoThumb" src="https://placehold.co/120x90/e2e8f0/64748b?text=MP3+Audio" alt="Thumbnail" class="w-20 h-14 object-cover rounded-lg shadow-sm" />
-                <div class="overflow-hidden flex-1">
-                    <p id="videoTitle" class="text-xs sm:text-sm font-semibold text-gray-800 truncate">YouTube Audio Track</p>
-                    <p class="text-xs text-emerald-600 font-medium mt-0.5"><i class="fa-solid fa-music mr-1"></i> Quality: 320 kbps High Quality Audio</p>
-                </div>
-            </div>
+    <div class="section-label">Backup Server Mirrors</div>
+    
+    <a href="#" class="mirror-btn" id="mirror1" target="_blank" onclick="useMirror(event, 1)">
+      <i class="fa-solid fa-server"></i> Server 1 (Direct Mirror)
+    </a>
+    <a href="#" class="mirror-btn" id="mirror2" target="_blank" onclick="useMirror(event, 2)">
+      <i class="fa-solid fa-bolt"></i> Server 2 (Fast Mirror)
+    </a>
 
-            <!-- Main Green Download Button -->
-            <button 
-                id="downloadBtn" 
-                onclick="triggerDownload()"
-                class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition duration-200 flex items-center justify-center space-x-3 text-base sm:text-lg cursor-pointer"
-            >
-                <i class="fa-solid fa-arrow-down-long text-xl animate-bounce"></i>
-                <span id="dlBtnText">Download MP3</span>
-            </button>
-
-            <!-- Embedded Live API iFrames & Backup Mirrors -->
-            <div id="engineContainer" class="mt-5 space-y-3 hidden">
-                <p class="text-xs font-semibold text-gray-500 text-center uppercase tracking-wider">Backup Server Mirrors</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <button onclick="downloadViaServer(1)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-3 rounded-lg font-medium border border-gray-300 flex items-center justify-center space-x-1">
-                        <i class="fa-solid fa-server text-xs"></i> <span>Server 1 (Direct MP3)</span>
-                    </button>
-                    <button onclick="downloadViaServer(2)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-3 rounded-lg font-medium border border-gray-300 flex items-center justify-center space-x-1">
-                        <i class="fa-solid fa-bolt text-xs"></i> <span>Server 2 (Fast Mirror)</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="w-full text-center text-xs text-gray-500 my-4">
-        &copy; <span id="year"></span> YouTube to MP3 Converter. All rights reserved.
+    <footer>
+      &copy; 2026 YouTube to MP3 Converter. All rights reserved.
     </footer>
+  </div>
 
-    <!-- JavaScript Logic -->
-    <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
-        let currentVideoId = "";
+  <script>
+    function extractVideoID(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
 
-        function isValidYouTubeUrl(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : false;
-        }
+    function checkInput() {
+      const input = document.getElementById('ytUrl').value;
+      document.getElementById('clearBtn').style.display = input ? 'block' : 'none';
+    }
 
-        function clearInput() {
-            document.getElementById('ytUrl').value = '';
-            document.getElementById('errorMsg').classList.add('hidden');
-        }
+    function clearInput() {
+      document.getElementById('ytUrl').value = '';
+      checkInput();
+    }
 
-        function handleConvert(event) {
-            event.preventDefault();
+    function processConversion() {
+      const url = document.getElementById('ytUrl').value.trim();
+      const videoId = extractVideoID(url);
 
-            const urlInput = document.getElementById('ytUrl').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
-            const convertBtn = document.getElementById('convertBtn');
-            const btnText = document.getElementById('btnText');
-            const btnSpinner = document.getElementById('btnSpinner');
-            const progressSection = document.getElementById('progressSection');
-            const progressBar = document.getElementById('progressBar');
-            const videoThumb = document.getElementById('videoThumb');
-            const videoTitle = document.getElementById('videoTitle');
-            const engineContainer = document.getElementById('engineContainer');
+      if (!videoId) {
+        alert('Please enter a valid YouTube video URL!');
+        return;
+      }
 
-            const videoId = isValidYouTubeUrl(urlInput);
-            if (!videoId) {
-                errorMsg.classList.remove('hidden');
-                return;
-            }
+      // Update Thumbnail & Info
+      document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+      document.getElementById('videoTitle').innerText = `YouTube Video ID: ${videoId}`;
 
-            currentVideoId = videoId;
-            errorMsg.classList.add('hidden');
+      // Update embedded converter engine (Loader.to iframe without 410 error)
+      const frameWrapper = document.getElementById('frameWrapper');
+      frameWrapper.innerHTML = `<iframe src="https://loader.to/api/card/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3" scrolling="no"></iframe>`;
+    }
 
-            // Spinner & State Update
-            convertBtn.disabled = true;
-            convertBtn.classList.add('opacity-80', 'cursor-not-allowed');
-            btnText.classList.add('hidden');
-            btnSpinner.classList.remove('hidden');
+    function useMirror(e, serverNum) {
+      const url = document.getElementById('ytUrl').value.trim();
+      const videoId = extractVideoID(url);
 
-            progressSection.classList.remove('hidden');
-            progressBar.style.width = '15%';
+      if (!videoId) {
+        e.preventDefault();
+        alert('Please enter a valid YouTube video URL first!');
+        return;
+      }
 
-            let progress = 15;
-            const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 20) + 15;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    
-                    setTimeout(() => {
-                        convertBtn.disabled = false;
-                        convertBtn.classList.remove('opacity-80', 'cursor-not-allowed');
-                        btnText.classList.remove('hidden');
-                        btnSpinner.classList.add('hidden');
-                        progressSection.classList.add('hidden');
-                        progressBar.style.width = '0%';
-
-                        // Update Video Info
-                        videoThumb.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                        videoTitle.textContent = `YouTube Video ID: ${videoId}`;
-                        engineContainer.classList.remove('hidden');
-
-                        // Scroll smoothly to download section
-                        document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
-                    }, 400);
-                }
-                progressBar.style.width = progress + '%';
-            }, 250);
-        }
-
-        function triggerDownload() {
-            const urlInput = document.getElementById('ytUrl').value.trim();
-            const videoId = isValidYouTubeUrl(urlInput) || currentVideoId;
-
-            if (videoId) {
-                window.open(`https://y2mate.nu/en-1/yt-mp3?url=https://www.youtube.com/watch?v=${videoId}`, '_blank');
-            } else {
-                alert('Please paste a valid YouTube URL first and click "Convert to MP3".');
-            }
-        }
-
-        function downloadViaServer(serverNum) {
-            const videoId = currentVideoId || isValidYouTubeUrl(document.getElementById('ytUrl').value.trim());
-            if (!videoId) {
-                alert('Please enter a YouTube URL!');
-                return;
-            }
-
-            if (serverNum === 1) {
-                window.open(`https://api.vevioz.com/api/button/mp3/${videoId}`, '_blank');
-            } else if (serverNum === 2) {
-                window.open(`https://loader.to/api/card/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3`, '_blank');
-            }
-        }
-    </script>
+      if (serverNum === 1) {
+        window.open(`https://loader.to/api/card/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3`, '_blank');
+      } else if (serverNum === 2) {
+        window.open(`https://yt1s.ltd/en/?q=https://www.youtube.com/watch?v=${videoId}`, '_blank');
+      }
+    }
+  </script>
 </body>
-  </html>
+</html>
