@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -177,7 +177,6 @@
       gap: 5px;
     }
 
-    /* Main Big Download Button */
     .btn-download-main {
       width: 100%;
       background: #059669;
@@ -272,17 +271,16 @@
       </div>
     </div>
 
-    <!-- Direct Working Download Action Button -->
-    <a href="#" id="mainDownloadBtn" class="btn-download-main" target="_blank" onclick="triggerDownload(event)">
+    <a href="javascript:void(0)" id="mainDownloadBtn" class="btn-download-main" onclick="startDownload()">
       <i class="fa-solid fa-download"></i> Download MP3
     </a>
 
     <div class="section-label">Backup Server Mirrors</div>
     
-    <a href="#" class="mirror-btn" id="mirror1" target="_blank" onclick="useMirror(event, 1)">
+    <a href="javascript:void(0)" class="mirror-btn" onclick="useMirror(1)">
       <i class="fa-solid fa-server"></i> Server 1 (Direct Mirror)
     </a>
-    <a href="#" class="mirror-btn" id="mirror2" target="_blank" onclick="useMirror(event, 2)">
+    <a href="javascript:void(0)" class="mirror-btn" onclick="useMirror(2)">
       <i class="fa-solid fa-bolt"></i> Server 2 (Fast Mirror)
     </a>
 
@@ -317,41 +315,38 @@
         return;
       }
 
-      // Update Thumbnail & Info dynamically
       document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
       document.getElementById('videoTitle').innerText = `YouTube Video ID: ${videoId}`;
-      
-      alert('Conversion successful! Click the green "Download MP3" button below.');
+
+      // Directly trigger working download tab
+      window.open(`https://y2mate.nu/${videoId}`, '_blank');
     }
 
-    function triggerDownload(e) {
+    function startDownload() {
       const url = document.getElementById('ytUrl').value.trim();
       const videoId = extractVideoID(url);
 
       if (!videoId) {
-        e.preventDefault();
-        alert('Please paste a YouTube link and click Convert first!');
+        alert('Please paste a YouTube link first!');
         return;
       }
 
-      // Safe direct link redirect to active converter endpoint
-      this.href = `https://loader.to/api/card/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3`;
+      window.open(`https://y2mate.is/en/download?url=https://www.youtube.com/watch?v=${videoId}`, '_blank');
     }
 
-    function useMirror(e, serverNum) {
+    function useMirror(serverNum) {
       const url = document.getElementById('ytUrl').value.trim();
       const videoId = extractVideoID(url);
 
       if (!videoId) {
-        e.preventDefault();
         alert('Please enter a valid YouTube video URL first!');
         return;
       }
 
       if (serverNum === 1) {
-        window.open(`https://loader.to/api/card/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3`, '_blank');
-      } else if (serverNum === 2) {
         window.open(`https://yt1s.ltd/en/?q=https://www.youtube.com/watch?v=${videoId}`, '_blank');
+      } else if (serverNum === 2) {
+        window.open(`https://ezmp3.cc/api/convert?url=https://www.youtube.com/watch?v=${videoId}`, '_blank');
       }
     }
   </script>
